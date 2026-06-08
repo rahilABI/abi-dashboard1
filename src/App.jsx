@@ -325,7 +325,23 @@ export default function App() {
     projectDescription: '',
     meetings: [],
     outcomes: [],
-    attachments: []
+    attachments: [],
+    startDate: '',
+    endDate: '',
+    toolsUsed: '',
+    processTimeBefore: '',
+    processTimeAfter: '',
+    processBefore: '',
+    processAfter: '',
+    errorRateBefore: '',
+    errorRateAfter: '',
+    securityRate: '',
+    dataVisibilityImproved: '',
+    adoptionRate: '',
+    slaCompliance: '',
+    errorRateReduced: '',
+    totalHoursSaved: '',
+    optimizationRate: ''
   });
   
   const [toastMessage, setToastMessage] = useState(null);
@@ -423,6 +439,10 @@ export default function App() {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setForgotPasswordStep(3);
+        setIsLoginModalOpen(true);
+      }
       if (session?.user) {
         handleUserSession(session.user);
       } else {
@@ -486,6 +506,51 @@ export default function App() {
   };
 
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!loginEmail.trim() || !loginEmail.includes('@')) {
+      triggerToast("Please enter a valid email address");
+      return;
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(loginEmail.trim(), {
+      redirectTo: window.location.origin,
+    });
+    if (error) {
+      triggerToast(error.message);
+    } else {
+      triggerToast("If an account exists, a reset link has been sent to your email.");
+      setIsLoginModalOpen(false);
+      resetAuthStates();
+    }
+  };
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    console.log("handleUpdatePassword triggered");
+    if (!newPassword || newPassword.length < 6) {
+      triggerToast("Password must be at least 6 characters");
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        console.error("Update password error from Supabase:", error);
+        triggerToast(error.message || "Failed to update password.");
+      } else {
+        console.log("Password updated successfully:", data);
+        triggerToast("Password updated successfully!");
+        setIsLoginModalOpen(false);
+        resetAuthStates();
+        // Clear the recovery token from the URL hash
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    } catch (err) {
+      console.error("Unexpected error during password update:", err);
+      triggerToast("An unexpected error occurred.");
+    }
+  };
+
   const resetAuthStates = () => {
     setLoginEmail('');
     setLoginPassword('');
@@ -548,12 +613,16 @@ export default function App() {
     }
   };
 
-  const openDetailsModal = (project) => {
+  const openDetailsModal = async (project) => {
     if (project.assignedTo === 'Unassigned' && !currentUser?.isAdmin) {
       triggerToast("Access denied: Please wait for the manager to assign this case.");
       return;
     }
     setActiveProjectId(project.projectId);
+
+    // Fetch metrics
+    const { data: metricsData } = await supabase.from('project_metrics').select('*').eq('ticket_id', project.projectId).maybeSingle();
+
     setModalForm({
       projectName: project.summary?.projectName || '',
       type: project.summary?.type || '',
@@ -561,7 +630,23 @@ export default function App() {
       stakeholders: project.stakeholders || project.summary?.stakeholders || '',
       meetings: project.summary?.meetings || [],
       outcomes: project.summary?.outcomes || [],
-      attachments: project.summary?.attachments || []
+      attachments: project.summary?.attachments || [],
+      startDate: metricsData?.start_date || '',
+      endDate: metricsData?.end_date || '',
+      toolsUsed: metricsData?.tools_used || '',
+      processTimeBefore: metricsData?.process_time_before || '',
+      processTimeAfter: metricsData?.process_time_after || '',
+      processBefore: metricsData?.process_before || '',
+      processAfter: metricsData?.process_after || '',
+      errorRateBefore: metricsData?.error_rate_before || '',
+      errorRateAfter: metricsData?.error_rate_after || '',
+      securityRate: metricsData?.security_rate || '',
+      dataVisibilityImproved: metricsData?.data_visibility_improved || '',
+      adoptionRate: metricsData?.adoption_rate || '',
+      slaCompliance: metricsData?.sla_compliance || '',
+      errorRateReduced: metricsData?.error_rate_reduced || '',
+      totalHoursSaved: metricsData?.total_hours_saved || '',
+      optimizationRate: metricsData?.optimization_rate || ''
     });
     setIsDetailsModalOpen(true);
   };
@@ -638,6 +723,26 @@ export default function App() {
         type_looker_id: typeId,
         outcomes: modalForm.outcomes
     }).eq('ticket_id', activeProjectId);
+
+    await supabase.from('project_metrics').upsert({
+        ticket_id: activeProjectId,
+        start_date: modalForm.startDate || null,
+        end_date: modalForm.endDate || null,
+        tools_used: modalForm.toolsUsed || '',
+        process_time_before: modalForm.processTimeBefore || '',
+        process_time_after: modalForm.processTimeAfter || '',
+        process_before: modalForm.processBefore || '',
+        process_after: modalForm.processAfter || '',
+        error_rate_before: modalForm.errorRateBefore || '',
+        error_rate_after: modalForm.errorRateAfter || '',
+        security_rate: modalForm.securityRate || '',
+        data_visibility_improved: modalForm.dataVisibilityImproved || '',
+        adoption_rate: modalForm.adoptionRate ? parseFloat(modalForm.adoptionRate) : null,
+        sla_compliance: modalForm.slaCompliance ? parseFloat(modalForm.slaCompliance) : null,
+        error_rate_reduced: modalForm.errorRateReduced ? parseFloat(modalForm.errorRateReduced) : null,
+        total_hours_saved: modalForm.totalHoursSaved ? parseFloat(modalForm.totalHoursSaved) : null,
+        optimization_rate: modalForm.optimizationRate || ''
+    }, { onConflict: 'ticket_id' });
 
     triggerToast("Saved project details to Supabase");
   };
@@ -1333,7 +1438,15 @@ export default function App() {
                     <input 
                       value={o.description}
                       onChange={(e) => handleOutcomeChange(idx, e.target.value)}
-                      placeholder="Enter outcome details..."
+                      placeholder={
+                        [
+                          "e.g., Created a new automated process...",
+                          "e.g., Implemented a new system architecture...",
+                          "e.g., Released a major feature update...",
+                          "e.g., What new change does this bring?...",
+                          "e.g., Reduced manual workflow time by 40%..."
+                        ][idx % 5]
+                      }
                       className={`flex-grow px-4 py-3 text-xs font-semibold focus:outline-none ${
                         isDarkMode 
                           ? "bg-[#0c0d1b] text-slate-200 focus:bg-[#03050c] placeholder-slate-500" 
@@ -1350,6 +1463,96 @@ export default function App() {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Row 5.75: Impact & Metrics */}
+            <div className={`mb-10 p-6 rounded-2xl border ${isDarkMode ? "bg-[#080b1a] border-indigo-500/20 shadow-[inset_0_0_20px_rgba(99,102,241,0.05)]" : "bg-[#F8FAFC] border-[#DFE1E6]"}`}>
+              <h3 className={`text-sm font-black uppercase tracking-widest mb-6 ${isDarkMode ? "text-indigo-400" : "text-[#0284C7]"}`}>
+                Impact & Metrics
+              </h3>
+              
+              {/* Grid 1: Basic & Timeline */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pb-6 border-b border-dashed border-indigo-500/20">
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Start Date</label>
+                  <input type="date" value={modalForm.startDate} onChange={(e) => setModalForm({...modalForm, startDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>End Date</label>
+                  <input type="date" value={modalForm.endDate} onChange={(e) => setModalForm({...modalForm, endDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div className="md:col-span-2">
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Tools & Technologies</label>
+                  <input type="text" placeholder="e.g. React, Supabase, Python" value={modalForm.toolsUsed} onChange={(e) => setModalForm({...modalForm, toolsUsed: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+              </div>
+
+              {/* Grid 2: Before / After Text Comparisons */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pb-6 border-b border-dashed border-indigo-500/20">
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Process Time (Before)</label>
+                  <input type="text" placeholder="e.g. 5 days" value={modalForm.processTimeBefore} onChange={(e) => setModalForm({...modalForm, processTimeBefore: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>Process Time (After)</label>
+                  <input type="text" placeholder="e.g. 2 hours" value={modalForm.processTimeAfter} onChange={(e) => setModalForm({...modalForm, processTimeAfter: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-[#34D399]/30 text-white focus:border-[#34D399]" : "bg-emerald-50 border-emerald-200 text-slate-800"}`} />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>How Is This Process Currently Being Handled?</label>
+                  <textarea placeholder="e.g. Manual Excel tracking across multiple departments..." value={modalForm.processBefore} onChange={(e) => setModalForm({...modalForm, processBefore: e.target.value})} rows={3} className={`w-full border px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none resize-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div className="md:col-span-2">
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>How Will This Process Be Handled After?</label>
+                  <textarea placeholder="e.g. Automated Dashboard syncing in real-time..." value={modalForm.processAfter} onChange={(e) => setModalForm({...modalForm, processAfter: e.target.value})} rows={3} className={`w-full border px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none resize-none transition-all ${isDarkMode ? "bg-[#03050c] border-[#34D399]/30 text-white focus:border-[#34D399]" : "bg-emerald-50 border-emerald-200 text-slate-800"}`} />
+                </div>
+
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Error Rate (Before)</label>
+                  <input type="text" placeholder="e.g. 15%" value={modalForm.errorRateBefore} onChange={(e) => setModalForm({...modalForm, errorRateBefore: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>Error Rate (After)</label>
+                  <input type="text" placeholder="e.g. < 1%" value={modalForm.errorRateAfter} onChange={(e) => setModalForm({...modalForm, errorRateAfter: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-[#34D399]/30 text-white focus:border-[#34D399]" : "bg-emerald-50 border-emerald-200 text-slate-800"}`} />
+                </div>
+              </div>
+
+              {/* Grid 3: Text Highlights */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 pb-6 border-b border-dashed border-indigo-500/20">
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Security Rate</label>
+                  <input type="text" placeholder="e.g. 100% Maintained" value={modalForm.securityRate} onChange={(e) => setModalForm({...modalForm, securityRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Data Visibility</label>
+                  <input type="text" placeholder="e.g. 3x Improved" value={modalForm.dataVisibilityImproved} onChange={(e) => setModalForm({...modalForm, dataVisibilityImproved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Optimization Rate</label>
+                  <input type="text" placeholder="e.g. High" value={modalForm.optimizationRate} onChange={(e) => setModalForm({...modalForm, optimizationRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+              </div>
+
+              {/* Grid 4: Numeric KPIs (for Dashboard/Showcase Aggregation) */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Adoption Rate (%)</label>
+                  <input type="number" placeholder="89" value={modalForm.adoptionRate} onChange={(e) => setModalForm({...modalForm, adoptionRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>SLA Compliance (%)</label>
+                  <input type="number" placeholder="99" value={modalForm.slaCompliance} onChange={(e) => setModalForm({...modalForm, slaCompliance: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Error Reduced (%)</label>
+                  <input type="number" placeholder="78" value={modalForm.errorRateReduced} onChange={(e) => setModalForm({...modalForm, errorRateReduced: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Hours Saved</label>
+                  <input type="number" placeholder="12400" value={modalForm.totalHoursSaved} onChange={(e) => setModalForm({...modalForm, totalHoursSaved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+              </div>
+
             </div>
 
             {/* Bottom Row: Attach files & Save (Exactly Wireframe 2) */}
@@ -1447,13 +1650,71 @@ export default function App() {
                 </svg>
               </div>
               <h2 className="text-lg font-bold tracking-tight">
-                {isSignUpMode ? "Join the workspace" : "Sign in to workspace"}
+                {forgotPasswordStep === 1 ? "Reset Password" : forgotPasswordStep === 3 ? "Set New Password" : isSignUpMode ? "Join the workspace" : "Sign in to workspace"}
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Enter your credentials to access the dashboard
+                {forgotPasswordStep === 1 ? "Enter your email to receive a reset link" : forgotPasswordStep === 3 ? "Enter your new password below" : "Enter your credentials to access the dashboard"}
               </p>
             </div>
 
+            {forgotPasswordStep === 1 ? (
+              <form onSubmit={handleForgotPassword} className="p-6 space-y-4">
+                <div>
+                  <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Email address</label>
+                  <input 
+                    type="email"
+                    required
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="name@tricog.com"
+                    className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
+                      isDarkMode 
+                        ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white" 
+                        : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800"
+                    }`}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold h-11 rounded-lg text-xs uppercase tracking-widest transition shadow-sm flex items-center justify-center gap-2"
+                >
+                  Send Reset Link
+                </button>
+                <div className="flex flex-col gap-3 text-center pt-2">
+                  <button 
+                    type="button"
+                    onClick={() => setForgotPasswordStep(0)}
+                    className="text-xs font-bold text-slate-400 hover:text-slate-300 transition"
+                  >
+                    Back to Sign In
+                  </button>
+                </div>
+              </form>
+            ) : forgotPasswordStep === 3 ? (
+              <form onSubmit={handleUpdatePassword} className="p-6 space-y-4">
+                <div>
+                  <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>New Password</label>
+                  <input 
+                    type="password"
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
+                      isDarkMode 
+                        ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white" 
+                        : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800"
+                    }`}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold h-11 rounded-lg text-xs uppercase tracking-widest transition shadow-sm flex items-center justify-center gap-2"
+                >
+                  Update Password
+                </button>
+              </form>
+            ) : (
               <form onSubmit={handleAuthSubmit} className="p-6 space-y-4">
                 {isSignUpMode && (
                   <div>
@@ -1492,6 +1753,15 @@ export default function App() {
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <label className={`block text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Password</label>
+                    {!isSignUpMode && (
+                      <button 
+                        type="button" 
+                        onClick={() => setForgotPasswordStep(1)}
+                        className="text-[10px] font-bold text-[#38BDF8] hover:text-[#0ea5e9] transition"
+                      >
+                        Forgot Password?
+                      </button>
+                    )}
                   </div>
                   <input 
                     type="password"
@@ -1531,7 +1801,7 @@ export default function App() {
                   </button>
                 </div>
               </form>
-
+            )}
           </div>
         </div>
       )}
