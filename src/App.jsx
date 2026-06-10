@@ -264,8 +264,9 @@ export default function App() {
                 type: lokkerMap[p.type_looker_id] || 'Other',
                 projectDescription: p.project_description || '',
                 stakeholders: stString,
-                meetings: [],
+                meetings: p.meetings || [],
                 outcomes: p.outcomes || [],
+                customMetrics: p.custom_metrics || [],
                 attachments: attachmentsMap[p.ticket_id] || []
             } : null
         }});
@@ -325,6 +326,7 @@ export default function App() {
     projectDescription: '',
     meetings: [],
     outcomes: [],
+    customMetrics: [],
     attachments: [],
     startDate: '',
     endDate: '',
@@ -749,6 +751,7 @@ export default function App() {
       stakeholders: project.stakeholders || project.summary?.stakeholders || '',
       meetings: project.summary?.meetings || [],
       outcomes: project.summary?.outcomes || [],
+      customMetrics: project.summary?.customMetrics || [],
       attachments: project.summary?.attachments || [],
       startDate: metricsData?.start_date || '',
       endDate: metricsData?.end_date || '',
@@ -809,6 +812,7 @@ export default function App() {
             stakeholders: modalForm.stakeholders,
             meetings: modalForm.meetings,
             outcomes: modalForm.outcomes,
+            customMetrics: modalForm.customMetrics,
             attachments: finalAttachments
           }
         };
@@ -840,7 +844,8 @@ export default function App() {
         project_name: modalForm.projectName,
         project_description: modalForm.projectDescription,
         type_looker_id: typeId,
-        outcomes: modalForm.outcomes
+        outcomes: modalForm.outcomes,
+        custom_metrics: modalForm.customMetrics
     }).eq('ticket_id', activeProjectId);
 
     await supabase.from('project_metrics').upsert({
@@ -899,10 +904,24 @@ export default function App() {
     });
   };
 
-  const handleOutcomeChange = (index, value) => {
+  const handleOutcomeChange = (idx, value) => {
     const updatedOutcomes = [...modalForm.outcomes];
-    updatedOutcomes[index].description = value;
+    updatedOutcomes[idx].description = value;
     setModalForm({ ...modalForm, outcomes: updatedOutcomes });
+  };
+
+  const handleAddCustomMetric = () => {
+    const newMetric = { id: Date.now(), name: '', value: '' };
+    setModalForm({
+      ...modalForm,
+      customMetrics: [...modalForm.customMetrics, newMetric]
+    });
+  };
+
+  const handleCustomMetricChange = (idx, field, value) => {
+    const updated = [...modalForm.customMetrics];
+    updated[idx][field] = value;
+    setModalForm({ ...modalForm, customMetrics: updated });
   };
 
   const handleFileUploadSim = (e) => {
@@ -1598,6 +1617,67 @@ export default function App() {
                     isDarkMode ? "bg-[#03050c]/40 border-indigo-500/10 text-[#94A3B8]" : "bg-slate-50 border-[#DFE1E6] text-slate-400"
                   }`}>
                     No outcomes logged. Add a point using the "+" module.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Row 5.6: Custom Metrics overview */}
+            <div className="mb-10">
+              <div className="flex items-center gap-4 mb-4">
+                <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Custom Metrics Overview</label>
+                <button 
+                  onClick={handleAddCustomMetric} 
+                  className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-lg transition-all focus:outline-none border ${
+                    isDarkMode 
+                      ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-indigo-500/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
+                      : "bg-sky-100 text-[#0284C7] hover:bg-sky-200 border-sky-300"
+                  }`}
+                  title="Add custom metric point"
+                >
+                  +
+                </button>
+              </div>
+              
+              <div className="space-y-3">
+                {modalForm.customMetrics.map((cm, idx) => (
+                  <div key={cm.id} className={`flex flex-col md:flex-row items-stretch rounded-lg border overflow-hidden shadow-sm ${
+                    isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
+                  }`}>
+                    <div className={`px-4 py-2 flex items-center justify-center font-mono text-xs font-bold border-r w-12 ${
+                      isDarkMode 
+                        ? "bg-[#03050c] text-indigo-300 border-indigo-500/20" 
+                        : "bg-[#F8FAFC] text-slate-600 border-[#DFE1E6]"
+                    }`}>
+                      {idx + 1}
+                    </div>
+                    <input 
+                      value={cm.name}
+                      onChange={(e) => handleCustomMetricChange(idx, 'name', e.target.value)}
+                      placeholder="Metric Name (e.g., Revenue Increased)"
+                      className={`w-1/2 border-r px-4 py-3 text-xs font-semibold focus:outline-none ${
+                        isDarkMode 
+                          ? "bg-[#0c0d1b] text-slate-200 border-indigo-500/20 focus:bg-[#03050c] placeholder-slate-500" 
+                          : "bg-white text-slate-800 border-gray-200 placeholder-slate-400"
+                      }`} 
+                    />
+                    <input 
+                      value={cm.value}
+                      onChange={(e) => handleCustomMetricChange(idx, 'value', e.target.value)}
+                      placeholder="Value (e.g., 20%)"
+                      className={`w-1/2 px-4 py-3 text-xs font-semibold focus:outline-none ${
+                        isDarkMode 
+                          ? "bg-[#0c0d1b] text-slate-200 focus:bg-[#03050c] placeholder-slate-500" 
+                          : "bg-white text-slate-800 placeholder-slate-400"
+                      }`} 
+                    />
+                  </div>
+                ))}
+                {modalForm.customMetrics.length === 0 && (
+                  <div className={`border border-dashed rounded-lg p-5 text-center text-xs font-bold uppercase tracking-widest ${
+                    isDarkMode ? "bg-[#03050c]/40 border-indigo-500/10 text-[#94A3B8]" : "bg-slate-50 border-[#DFE1E6] text-slate-400"
+                  }`}>
+                    No custom metrics logged. Add a point using the "+" module.
                   </div>
                 )}
               </div>
