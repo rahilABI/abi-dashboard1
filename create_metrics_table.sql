@@ -9,13 +9,13 @@ CREATE TABLE IF NOT EXISTS public.project_metrics (
   process_after TEXT,
   error_rate_before TEXT,
   error_rate_after TEXT,
-  security_rate TEXT,
-  data_visibility_improved TEXT,
+  security_rate NUMERIC,
+  data_visibility_improved NUMERIC,
   adoption_rate NUMERIC,
   sla_compliance NUMERIC,
   error_rate_reduced NUMERIC,
   total_hours_saved NUMERIC,
-  optimization_rate TEXT,
+  optimization_rate NUMERIC,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

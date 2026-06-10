@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ChevronDown, X, Paperclip, Check, Save, Plus, FileText, Lock, Unlock, Sun, Moon } from 'lucide-react';
+import { ChevronDown, X, Paperclip, Check, CheckCircle, Save, Plus, FileText, Lock, Unlock, Sun, Moon } from 'lucide-react';
 import { supabase } from './lib/supabaseClient';
 
 // ==========================================
@@ -300,7 +300,7 @@ export default function App() {
     };
   }, []);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(7);
   const [isDarkMode, setIsDarkMode] = useState(true); // Default Space theme is Dark Mode
   const [availableTypes, setAvailableTypes] = useState(['Other']); // Dynamic Types
   
@@ -356,6 +356,11 @@ export default function App() {
     return currentUser?.isAdmin || false;
   }, [currentUser]);
 
+  const canEditStatusAndPublish = (project) => {
+    if (!currentUser) return false;
+    return currentUser.isAdmin || currentUser.name === project.assignedTo;
+  };
+
   // ==========================================
   // SIMULATED BACKEND LOOKUP FUNCTION
   // ==========================================
@@ -372,9 +377,9 @@ export default function App() {
       };
     }
 
-    if (cleanEmail === 'mohammad.rahil@tricog.com') {
+    if (cleanEmail === 'rahilspike@gmail.com') {
       return {
-        name: "Mohammad Rahil",
+        name: "user test",
         email: cleanEmail,
         role: "Super Admin",
         isAdmin: true
@@ -385,6 +390,7 @@ export default function App() {
     const knownMails = {
       'abhay.pa@tricog.com': 'Abhay P A',
       'dhigin.chanikya@tricog.com': 'Dhigin Chanikya',
+      'mohammad.rahil@tricog.com': 'Mohammad Rahil',
       'sunil.morries@tricog.com': 'Sunil Morries',
       'vinaykumar.b@tricog.com': 'Vinaykumar B Kandibal',
       'pavan.c@tricog.com': 'Pavan C'
@@ -460,6 +466,22 @@ export default function App() {
       return;
     }
 
+    const ALLOWED_EMAILS_EXTENDED = [
+      "abhaypa@tricog.com", "abhay.pa@tricog.com",
+      "adarshjayaraj@tricog.com", "adarsh.jayaraj@tricog.com", "adarsh@tricog.com",
+      "dhiginchanikya@tricog.com", "dhigin.chanikya@tricog.com",
+      "mohammadrahil@tricog.com", "mohammad.rahil@tricog.com",
+      "pavanc@tricog.com", "pavan.c@tricog.com",
+      "sunilmorries@tricog.com", "sunil.morries@tricog.com",
+      "vinaykumarbkandibal@tricog.com", "vinaykumar.b@tricog.com",
+      "rahilspike@gmail.com"
+    ];
+
+    if (!ALLOWED_EMAILS_EXTENDED.includes(loginEmail.trim().toLowerCase())) {
+      triggerToast("Access Denied: Your email is not authorized for this workspace.");
+      return;
+    }
+
 
 
     if (!loginPassword || loginPassword.length < 6) {
@@ -510,6 +532,22 @@ export default function App() {
     e.preventDefault();
     if (!loginEmail.trim() || !loginEmail.includes('@')) {
       triggerToast("Please enter a valid email address");
+      return;
+    }
+
+    const ALLOWED_EMAILS_EXTENDED = [
+      "abhaypa@tricog.com", "abhay.pa@tricog.com",
+      "adarshjayaraj@tricog.com", "adarsh.jayaraj@tricog.com", "adarsh@tricog.com",
+      "dhiginchanikya@tricog.com", "dhigin.chanikya@tricog.com",
+      "mohammadrahil@tricog.com", "mohammad.rahil@tricog.com",
+      "pavanc@tricog.com", "pavan.c@tricog.com",
+      "sunilmorries@tricog.com", "sunil.morries@tricog.com",
+      "vinaykumarbkandibal@tricog.com", "vinaykumar.b@tricog.com",
+      "rahilspike@gmail.com"
+    ];
+
+    if (!ALLOWED_EMAILS_EXTENDED.includes(loginEmail.trim().toLowerCase())) {
+      triggerToast("Access Denied: Your email is not authorized for this workspace.");
       return;
     }
     const { error } = await supabase.auth.resetPasswordForEmail(loginEmail.trim(), {
@@ -564,6 +602,87 @@ export default function App() {
     await supabase.auth.signOut();
     setCurrentUser(null);
     triggerToast("Logged out successfully");
+  };
+
+  const runSeeder = async () => {
+    const group1 = ["Abhay P A", "Dhigin Chanikya", "Mohammad Rahil", "Adarsh Jayaraj"];
+    const types1 = ["automation", "website", "workflow"];
+
+    const group2 = ["Vinaykumar B Kandibal", "Pavan C", "Sunil Morries"];
+    const types2 = ["dashboards", "data insights"];
+
+    const depts = ["Software", "IT", "HR", "Sales", "Finance", "Marketing"];
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    triggerToast("Seeding started...");
+    
+    const { data: users } = await supabase.from('users').select('user_id, display_name');
+    const { data: statuses } = await supabase.from('status_looker').select('id, status_name');
+    
+    const publishedStatus = statuses?.find(s => s.status_name === "Users feedback") || statuses?.[0];
+
+    const projectsToInsert = [];
+    const metricsToInsert = [];
+
+    let ticketCounter = randomInt(5000, 9000);
+
+    const generateForPerson = (name, allowedTypes) => {
+      const user = users?.find(u => u.display_name === name);
+      if (!user) return;
+      
+      for (let i = 0; i < 5; i++) {
+        const type = randomItem(allowedTypes);
+        const ticketId = `AUTO-${ticketCounter++}`;
+        
+        projectsToInsert.push({
+          ticket_id: ticketId,
+          department: randomItem(depts),
+          problem_statement: `Automated test problem statement for ${type} ${i}`,
+          is_published: true,
+          assigned_user_id: user.user_id,
+          stakeholders: "Admin, QA",
+          project_name: `${name}'s ${type} Project ${i}`,
+          type: type,
+          project_description: `This is an auto-generated ${type} project assigned to ${name}.`,
+          status_looker_id: publishedStatus?.id
+        });
+
+        const metrics = { ticket_id: ticketId, tools_used: '["React", "Node.js"]' };
+        
+        if (type === 'automation' || type === 'workflow') {
+          metrics.total_hours_saved = randomInt(10, 50);
+          if (Math.random() > 0.5) metrics.optimization_rate = randomInt(10, 80);
+        } else if (type === 'website') {
+          metrics.data_visibility_improved = randomInt(2, 5);
+          metrics.adoption_rate = randomInt(50, 95);
+        } else if (type === 'dashboards' || type === 'data insights') {
+          metrics.data_visibility_improved = randomInt(2, 10);
+          metrics.adoption_rate = randomInt(60, 100);
+          if (Math.random() > 0.5) metrics.security_rate = randomInt(80, 100);
+        }
+        
+        if (Math.random() > 0.7) {
+          metrics.sla_compliance = randomInt(90, 100);
+        }
+        
+        metricsToInsert.push(metrics);
+      }
+    };
+
+    group1.forEach(name => generateForPerson(name, types1));
+    group2.forEach(name => generateForPerson(name, types2));
+
+    await supabase.from('projects').insert(projectsToInsert);
+    await supabase.from('project_metrics').insert(metricsToInsert);
+    
+    triggerToast("Seeding complete! Please refresh the page.");
   };
 
   const handleStatusChange = async (projectId, newStatus) => {
@@ -842,8 +961,9 @@ export default function App() {
       // Visibility constraints: Must be logged in
       if (!currentUser) return false;
       
-      // If not an admin, user can ONLY see projects assigned specifically to them or Unassigned projects.
-      if (!currentUser.isAdmin && p.assignedTo !== currentUser.name && p.assignedTo !== 'Unassigned') {
+      // Unassigned projects are only visible to the manager.
+      // We no longer filter out projects assigned to other users, allowing everyone to see them.
+      if (!currentUser.isAdmin && p.assignedTo === 'Unassigned') {
         return false;
       }
 
@@ -955,7 +1075,10 @@ export default function App() {
         <div className={`mb-8 border-b pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
           isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
         }`}>
-          <h2 className={`text-3xl font-black tracking-tight uppercase tracking-widest ${isDarkMode ? "text-white" : "text-[#0F172A]"}`}>Projects</h2>
+          <div className="flex items-center gap-4">
+            <h2 className={`text-3xl font-black tracking-tight uppercase tracking-widest ${isDarkMode ? "text-white" : "text-[#0F172A]"}`}>Projects</h2>
+            
+          </div>
           
           {/* Dynamic "Team" Dropdown in place of Node Fleet Metric */}
           <div className="flex flex-wrap items-center gap-4">
@@ -973,7 +1096,9 @@ export default function App() {
                 {TEAM_MEMBERS.filter(m => m !== "Unassigned").map(member => (
                   <option key={member} value={member} className={isDarkMode ? "bg-[#0b0c16] text-slate-300" : "bg-white text-slate-850"}>{member}</option>
                 ))}
-                <option value="Unassigned" className={isDarkMode ? "bg-[#0b0c16] text-slate-300" : "bg-white text-slate-850"}>Unassigned</option>
+                {currentUser?.isAdmin && (
+                  <option value="Unassigned" className={isDarkMode ? "bg-[#0b0c16] text-slate-300" : "bg-white text-slate-850"}>Unassigned</option>
+                )}
               </select>
             </div>
 
@@ -1073,7 +1198,7 @@ export default function App() {
                   <div className={`w-full md:w-3/12 flex items-center justify-center p-6 ${
                     isDarkMode ? "bg-[#03050c]/40" : "bg-[#F8FAFC]"
                   }`}>
-                    <button
+                    <button 
                       onClick={() => openDetailsModal(project)}
                       className={`w-full max-w-[210px] font-black text-xs uppercase tracking-widest px-5 py-3 rounded-xl flex items-center justify-between border transition-all duration-300 ${
                         hasSummary 
@@ -1115,11 +1240,15 @@ export default function App() {
                       isDarkMode ? "border-indigo-500/10" : "border-[#DFE1E6]"
                     }`}>
                       <div className="flex items-center gap-2">
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${isDarkMode ? "text-[#94A3B8]" : "text-slate-500"}`}>status</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isDarkMode ? "text-[#94A3B8]" : "text-slate-500"}`}>
+                          status
+                          {!canEditStatusAndPublish(project) && <Lock className="h-3 w-3" />}
+                        </span>
                         <select
                           value={project.projectStatus}
+                          disabled={!canEditStatusAndPublish(project)}
                           onChange={(e) => handleStatusChange(project.projectId, e.target.value)}
-                          className={`text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none cursor-pointer border transition-all ${getSpaceStatusColor(project.projectStatus, isDarkMode)}`}
+                          className={`text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none cursor-pointer border transition-all ${getSpaceStatusColor(project.projectStatus, isDarkMode)} ${!canEditStatusAndPublish(project) ? 'opacity-70 cursor-not-allowed' : ''}`}
                         >
                           {STATUS_STAGES.map(stage => (
                             <option key={stage} value={stage} className={isDarkMode ? "bg-[#0b0c16] text-slate-300" : "bg-white text-slate-850"}>{stage}</option>
@@ -1129,14 +1258,16 @@ export default function App() {
                       
                       <button
                         onClick={() => handlePublishToggle(project)}
-                        className={`text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-lg border transition-all duration-300 ${
+                        disabled={!canEditStatusAndPublish(project)}
+                        className={`text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-lg border transition-all duration-300 flex items-center gap-1.5 ${
                           project.isPublished 
                             ? "text-emerald-400 bg-[#064E3B] border-emerald-500/40 hover:bg-[#064E3B]/80" 
                             : isDarkMode 
                               ? "text-slate-400 bg-[#0b0c16] border-indigo-500/20 hover:bg-indigo-950 hover:text-white"
                               : "text-[#0284C7] bg-white border-[#0284C7]/20 hover:bg-sky-50"
-                        }`}
+                        } ${!canEditStatusAndPublish(project) ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''}`}
                       >
+                        {!canEditStatusAndPublish(project) && <Lock className="h-3 w-3" />}
                         {project.isPublished ? "Published" : "Publish"}
                       </button>
                     </div>
@@ -1212,11 +1343,15 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Status</span>
+                <span className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>
+                  Status
+                  {!canEditStatusAndPublish(activeProject) && <Lock className="h-3 w-3" />}
+                </span>
                 <select
                   value={activeProject.projectStatus}
+                  disabled={!canEditStatusAndPublish(activeProject)}
                   onChange={(e) => handleStatusChange(activeProject.projectId, e.target.value)}
-                  className={`text-xs font-bold rounded-lg px-3.5 py-1.5 focus:outline-none cursor-pointer border ${getSpaceStatusColor(activeProject.projectStatus, isDarkMode)}`}
+                  className={`text-xs font-bold rounded-lg px-3.5 py-1.5 focus:outline-none cursor-pointer border ${getSpaceStatusColor(activeProject.projectStatus, isDarkMode)} ${!canEditStatusAndPublish(activeProject) ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
                   {STATUS_STAGES.map(stage => (
                     <option key={stage} value={stage} className={isDarkMode ? "bg-[#0b0c16] text-slate-300" : "bg-white text-slate-850"}>{stage}</option>
@@ -1237,18 +1372,21 @@ export default function App() {
 
               <button 
                 onClick={() => handlePublishToggle(activeProject)} 
-                className={`text-xs font-black uppercase tracking-wider py-1.5 px-4 rounded-lg border transition-all ${
+                disabled={!canEditStatusAndPublish(activeProject)}
+                className={`text-xs font-black uppercase tracking-wider py-1.5 px-4 rounded-lg border transition-all flex items-center gap-1.5 ${
                   activeProject.isPublished 
                     ? "text-emerald-400 bg-[#064E3B] border-emerald-500/40" 
                     : isDarkMode 
                       ? "text-slate-400 bg-transparent border-indigo-500/20 hover:border-indigo-500/40" 
                       : "text-slate-500 bg-transparent border-[#DFE1E6] hover:bg-slate-50"
-                }`}
+                } ${!canEditStatusAndPublish(activeProject) ? 'opacity-50 cursor-not-allowed hover:bg-transparent hover:border-transparent' : ''}`}
               >
+                {!canEditStatusAndPublish(activeProject) && <Lock className="h-3 w-3" />}
                 {activeProject.isPublished ? "Published" : "Publish"}
               </button>
             </div>
 
+            <fieldset disabled={!canEditStatusAndPublish(activeProject)} style={{ minWidth: 0, padding: 0, margin: 0, border: 'none' }}>
             {/* Row 2: Project name & Type (Exactly Wireframe 2) */}
             <div className="flex flex-col md:flex-row gap-6 mb-6">
               <div className="flex-1">
@@ -1520,16 +1658,16 @@ export default function App() {
               {/* Grid 3: Text Highlights */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 pb-6 border-b border-dashed border-indigo-500/20">
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Security Rate</label>
-                  <input type="text" placeholder="e.g. 100% Maintained" value={modalForm.securityRate} onChange={(e) => setModalForm({...modalForm, securityRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Security Rate (%)</label>
+                  <input type="number" placeholder="100" value={modalForm.securityRate} onChange={(e) => setModalForm({...modalForm, securityRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Data Visibility</label>
-                  <input type="text" placeholder="e.g. 3x Improved" value={modalForm.dataVisibilityImproved} onChange={(e) => setModalForm({...modalForm, dataVisibilityImproved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Data Visibility Improved (Multiplier e.g., 3)</label>
+                  <input type="number" placeholder="3" value={modalForm.dataVisibilityImproved} onChange={(e) => setModalForm({...modalForm, dataVisibilityImproved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Optimization Rate</label>
-                  <input type="text" placeholder="e.g. High" value={modalForm.optimizationRate} onChange={(e) => setModalForm({...modalForm, optimizationRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Optimization Rate (%)</label>
+                  <input type="number" placeholder="95" value={modalForm.optimizationRate} onChange={(e) => setModalForm({...modalForm, optimizationRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
               </div>
 
@@ -1560,66 +1698,78 @@ export default function App() {
               isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
             }`}>
               
-              <div className="flex flex-col gap-2.5">
-                <label className={`flex items-center gap-2 cursor-pointer text-xs font-bold px-3.5 py-2.5 rounded-lg border transition-all w-fit ${
-                  isDarkMode 
-                    ? "text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/30" 
-                    : "text-[#0284C7] bg-[#F0F9FF] hover:bg-sky-100 border-[#B3D4FF]"
-                }`}>
-                  <Paperclip className="h-4 w-4" />
-                  <span>Attach specifications</span>
-                  <input type="file" className="hidden" onChange={handleFileUploadSim} />
-                </label>
-                
-                <div className="flex flex-wrap gap-2">
-                  {modalForm.attachments.map((file, idx) => (
-                    <span key={idx} className={`text-xs border px-2.5 py-1.5 rounded flex items-center gap-1.5 font-mono cursor-pointer transition-colors ${
+              {canEditStatusAndPublish(activeProject) ? (
+                <>
+                  <div className="flex flex-col gap-2.5">
+                    <label className={`flex items-center gap-2 cursor-pointer text-xs font-bold px-3.5 py-2.5 rounded-lg border transition-all w-fit ${
                       isDarkMode 
-                        ? "bg-[#03050c] border-indigo-500/20 text-slate-300 hover:border-[#38BDF8]/40" 
-                        : "bg-slate-50 border-[#DFE1E6] text-slate-600 hover:border-[#0284C7]/40"
-                    }`} onClick={() => {
-                        if (file.dataUrl) {
-                            const newWindow = window.open("");
-                            if (newWindow) {
-                                newWindow.document.write(`<iframe src="${file.dataUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                        ? "text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/30" 
+                        : "text-[#0284C7] bg-[#F0F9FF] hover:bg-sky-100 border-[#B3D4FF]"
+                    }`}>
+                      <Paperclip className="h-4 w-4" />
+                      <span>Attach specifications</span>
+                      <input type="file" className="hidden" onChange={handleFileUploadSim} />
+                    </label>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {modalForm.attachments.map((file, idx) => (
+                        <span key={idx} className={`text-xs border px-2.5 py-1.5 rounded flex items-center gap-1.5 font-mono cursor-pointer transition-colors ${
+                          isDarkMode 
+                            ? "bg-[#03050c] border-indigo-500/20 text-slate-300 hover:border-[#38BDF8]/40"
+                            : "bg-slate-50 border-[#DFE1E6] text-slate-600 hover:border-[#0284C7]/40"
+                        }`} onClick={(e) => {
+                            if (file.dataUrl) {
+                                const newWindow = window.open("");
+                                if (newWindow) {
+                                    newWindow.document.write(`<iframe src="${file.dataUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                                }
                             }
-                        }
-                    }}>
-                      <FileText className="h-3 w-3 text-[#38BDF8]" />
-                      {file.name} ({file.size})
-                      <button
-                        type="button"
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          const newAttachments = [...modalForm.attachments];
-                          const removed = newAttachments.splice(idx, 1)[0];
-                          if (removed.id) {
-                              await supabase.from('project_attachments').delete().eq('id', removed.id);
-                          }
-                          setModalForm({...modalForm, attachments: newAttachments});
-                        }}
-                        className="ml-1.5 rounded-full hover:bg-red-500/20 text-red-500/70 hover:text-red-500 transition-colors p-0.5 focus:outline-none"
-                        title="Remove attachment"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </div>
+                        }}>
+                          <FileText className="h-3 w-3 text-[#38BDF8]" />
+                          {file.name} ({file.size})
+                          <button
+                            type="button"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              const newAttachments = [...modalForm.attachments];
+                              const removed = newAttachments.splice(idx, 1)[0];
+                              if (removed.id) {
+                                  await supabase.from('project_attachments').delete().eq('id', removed.id);
+                              }
+                              setModalForm({...modalForm, attachments: newAttachments});
+                            }}
+                            className="ml-1.5 rounded-full hover:bg-red-500/20 text-red-500/70 hover:text-red-500 transition-colors p-0.5 focus:outline-none"
+                            title="Remove attachment"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
 
-              {/* Stark, bold save CTA (10% Accent) */}
-              <button 
-                onClick={saveDetailsContext} 
-                className={`w-full sm:w-auto font-extrabold text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl shadow-lg transition-all duration-300 ${
-                  isDarkMode 
-                    ? "bg-gradient-to-r from-[#0284C7] to-indigo-600 hover:from-[#0284C7]/80 hover:to-indigo-500/80 text-white shadow-indigo-500/10 hover:shadow-indigo-500/20" 
-                    : "bg-[#0284C7] hover:bg-[#0284C7]/90 text-white shadow-sky-500/10 hover:shadow-sky-500/20"
-                }`}
-              >
-                Save
-              </button>
+                  {/* Stark, bold save CTA (10% Accent) */}
+                  <button 
+                    onClick={saveDetailsContext} 
+                    className={`w-full sm:w-auto font-extrabold text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl shadow-lg transition-all duration-300 ${
+                      isDarkMode 
+                        ? "bg-gradient-to-r from-[#0284C7] to-indigo-600 hover:from-[#0284C7]/80 hover:to-indigo-500/80 text-white shadow-indigo-500/10 hover:shadow-indigo-500/20" 
+                        : "bg-[#0284C7] hover:bg-[#0284C7]/90 text-white shadow-sky-500/10 hover:shadow-sky-500/20"
+                    }`}
+                  >
+                    Save Changes
+                  </button>
+                </>
+              ) : (
+                <div className="w-full text-center py-4 flex flex-col items-center justify-center gap-3">
+                  <Lock className={`h-5 w-5 ${isDarkMode ? "text-indigo-400" : "text-slate-500"}`} />
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-400/80" : "text-slate-500"}`}>
+                    View Only Mode — Attachments Restricted
+                  </span>
+                </div>
+              )}
             </div>
+            </fieldset>
 
           </div>
         </div>
