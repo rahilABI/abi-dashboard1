@@ -1622,66 +1622,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Row 5.6: Custom Metrics overview */}
-            <div className="mb-10">
-              <div className="flex items-center gap-4 mb-4">
-                <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Custom Metrics Overview</label>
-                <button 
-                  onClick={handleAddCustomMetric} 
-                  className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-lg transition-all focus:outline-none border ${
-                    isDarkMode 
-                      ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-indigo-500/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
-                      : "bg-sky-100 text-[#0284C7] hover:bg-sky-200 border-sky-300"
-                  }`}
-                  title="Add custom metric point"
-                >
-                  +
-                </button>
-              </div>
-              
-              <div className="space-y-3">
-                {modalForm.customMetrics.map((cm, idx) => (
-                  <div key={cm.id} className={`flex flex-col md:flex-row items-stretch rounded-lg border overflow-hidden shadow-sm ${
-                    isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
-                  }`}>
-                    <div className={`px-4 py-2 flex items-center justify-center font-mono text-xs font-bold border-r w-12 ${
-                      isDarkMode 
-                        ? "bg-[#03050c] text-indigo-300 border-indigo-500/20" 
-                        : "bg-[#F8FAFC] text-slate-600 border-[#DFE1E6]"
-                    }`}>
-                      {idx + 1}
-                    </div>
-                    <input 
-                      value={cm.name}
-                      onChange={(e) => handleCustomMetricChange(idx, 'name', e.target.value)}
-                      placeholder="Metric Name (e.g., Revenue Increased)"
-                      className={`w-1/2 border-r px-4 py-3 text-xs font-semibold focus:outline-none ${
-                        isDarkMode 
-                          ? "bg-[#0c0d1b] text-slate-200 border-indigo-500/20 focus:bg-[#03050c] placeholder-slate-500" 
-                          : "bg-white text-slate-800 border-gray-200 placeholder-slate-400"
-                      }`} 
-                    />
-                    <input 
-                      value={cm.value}
-                      onChange={(e) => handleCustomMetricChange(idx, 'value', e.target.value)}
-                      placeholder="Value (e.g., 20%)"
-                      className={`w-1/2 px-4 py-3 text-xs font-semibold focus:outline-none ${
-                        isDarkMode 
-                          ? "bg-[#0c0d1b] text-slate-200 focus:bg-[#03050c] placeholder-slate-500" 
-                          : "bg-white text-slate-800 placeholder-slate-400"
-                      }`} 
-                    />
-                  </div>
-                ))}
-                {modalForm.customMetrics.length === 0 && (
-                  <div className={`border border-dashed rounded-lg p-5 text-center text-xs font-bold uppercase tracking-widest ${
-                    isDarkMode ? "bg-[#03050c]/40 border-indigo-500/10 text-[#94A3B8]" : "bg-slate-50 border-[#DFE1E6] text-slate-400"
-                  }`}>
-                    No custom metrics logged. Add a point using the "+" module.
-                  </div>
-                )}
-              </div>
-            </div>
+
 
             {/* Row 5.75: Impact & Metrics */}
             <div className={`mb-10 p-6 rounded-2xl border ${isDarkMode ? "bg-[#080b1a] border-indigo-500/20 shadow-[inset_0_0_20px_rgba(99,102,241,0.05)]" : "bg-[#F8FAFC] border-[#DFE1E6]"}`}>
@@ -1768,6 +1709,67 @@ export default function App() {
                 <div>
                   <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Hours Saved</label>
                   <input type="number" placeholder="12400" value={modalForm.totalHoursSaved} onChange={(e) => setModalForm({...modalForm, totalHoursSaved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+              </div>
+
+              {/* Grid 5: Custom Metrics overview */}
+              <div className="mt-8 pt-6 border-t border-dashed border-indigo-500/20">
+                <div className="flex items-center gap-4 mb-4">
+                  <label className={`text-[10px] font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Custom Metrics Overview</label>
+                  <button 
+                    onClick={handleAddCustomMetric} 
+                    className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm transition-all focus:outline-none border ${
+                      isDarkMode 
+                        ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-indigo-500/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
+                        : "bg-sky-100 text-[#0284C7] hover:bg-sky-200 border-sky-300"
+                    }`}
+                    title="Add custom metric point"
+                  >
+                    +
+                  </button>
+                </div>
+                
+                <div className="space-y-3">
+                  {modalForm.customMetrics.map((cm, idx) => (
+                    <div key={cm.id} className={`flex flex-col md:flex-row items-stretch rounded-lg border overflow-hidden shadow-sm ${
+                      isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
+                    }`}>
+                      <div className={`px-4 py-2 flex items-center justify-center font-mono text-xs font-bold border-r w-12 ${
+                        isDarkMode 
+                          ? "bg-[#03050c] text-indigo-300 border-indigo-500/20" 
+                          : "bg-[#F8FAFC] text-slate-600 border-[#DFE1E6]"
+                      }`}>
+                        {idx + 1}
+                      </div>
+                      <input 
+                        value={cm.name}
+                        onChange={(e) => handleCustomMetricChange(idx, 'name', e.target.value)}
+                        placeholder="Metric Name (e.g., Revenue Increased)"
+                        className={`w-1/2 border-r px-4 py-3 text-xs font-semibold focus:outline-none ${
+                          isDarkMode 
+                            ? "bg-[#0c0d1b] text-slate-200 border-indigo-500/20 focus:bg-[#03050c] placeholder-slate-500" 
+                            : "bg-white text-slate-800 border-gray-200 placeholder-slate-400"
+                        }`} 
+                      />
+                      <input 
+                        value={cm.value}
+                        onChange={(e) => handleCustomMetricChange(idx, 'value', e.target.value)}
+                        placeholder="Value (e.g., 20%)"
+                        className={`w-1/2 px-4 py-3 text-xs font-semibold focus:outline-none ${
+                          isDarkMode 
+                            ? "bg-[#0c0d1b] text-slate-200 focus:bg-[#03050c] placeholder-slate-500" 
+                            : "bg-white text-slate-800 placeholder-slate-400"
+                        }`} 
+                      />
+                    </div>
+                  ))}
+                  {modalForm.customMetrics.length === 0 && (
+                    <div className={`border border-dashed rounded-lg p-5 text-center text-xs font-bold uppercase tracking-widest ${
+                      isDarkMode ? "bg-[#03050c]/40 border-indigo-500/10 text-[#94A3B8]" : "bg-slate-50 border-[#DFE1E6] text-slate-400"
+                    }`}>
+                      No custom metrics logged. Add a point using the "+" module.
+                    </div>
+                  )}
                 </div>
               </div>
 
