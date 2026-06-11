@@ -212,11 +212,11 @@ export default function App() {
         const { data: stakeholdersData } = await supabase.from('stakeholders').select('*');
         const { data: projectStakeholdersData } = await supabase.from('project_stakeholders').select('*');
         const { data: projectAttachmentsData } = await supabase.from('project_attachments').select('*');
-        const { data: metricsDataAll } = await supabase.from('project_metrics').select('ticket_id, end_date');
+        const { data: metricsDataAll } = await supabase.from('project_metrics').select('ticket_id, start_date, end_date');
 
         const metricsMap = {};
         if (metricsDataAll) {
-            metricsDataAll.forEach(m => metricsMap[m.ticket_id] = m.end_date);
+            metricsDataAll.forEach(m => metricsMap[m.ticket_id] = { startDate: m.start_date, endDate: m.end_date });
         }
 
         const shMap = {};
@@ -265,7 +265,8 @@ export default function App() {
             isPublished: p.is_published,
             assignedTo: usersMap[p.assigned_user_id] || 'Unassigned',
             stakeholders: stString,
-            endDate: metricsMap[p.ticket_id] || '',
+            startDate: metricsMap[p.ticket_id]?.startDate || '',
+            endDate: metricsMap[p.ticket_id]?.endDate || '',
             summary: p.project_name ? {
                 projectName: p.project_name,
                 type: lokkerMap[p.type_looker_id] || 'Other',
@@ -740,6 +741,24 @@ export default function App() {
       triggerToast(`Error assigning project: ${updateErr.message}`);
     } else {
       triggerToast(`Assigned to ${newAssignee}`);
+    }
+  };
+
+  const handleStartDateChange = async (projectId, newStartDate) => {
+    if (!currentUser?.isAdmin) {
+      triggerToast("Permission denied: Only an Admin can change start dates.");
+      return;
+    }
+    // Optimistic local update
+    setProjects(projects.map(p => p.projectId === projectId ? { ...p, startDate: newStartDate } : p));
+    
+    // Upsert to Supabase
+    const { error: updateErr } = await supabase.from('project_metrics').upsert({ ticket_id: projectId, start_date: newStartDate || null }, { onConflict: 'ticket_id' });
+    if (updateErr) {
+      console.error("Failed to update project start date:", updateErr);
+      triggerToast(`Error updating start date: ${updateErr.message}`);
+    } else {
+      triggerToast(`Start Date updated`);
     }
   };
 
@@ -1248,6 +1267,23 @@ export default function App() {
                           <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
                             isDarkMode ? "text-indigo-300" : "text-slate-500"
                           }`}>
+                            START DATE
+                          </span>
+                          <input 
+                            type="date"
+                            value={project.startDate || ""}
+                            onChange={(e) => handleStartDateChange(project.projectId, e.target.value)}
+                            className={`text-[10px] font-bold px-2 py-1 rounded border transition-all outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer ${
+                              isDarkMode 
+                                ? "bg-[#0b0c16] text-[#38BDF8] border-indigo-500/20 [color-scheme:dark]" 
+                                : "bg-[#F8FAFC] text-[#0284C7] border-[#DFE1E6] [color-scheme:light]"
+                            }`}
+                          />
+
+                          <span className="font-bold text-slate-400/50 mx-2">|</span>
+                          <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
+                            isDarkMode ? "text-indigo-300" : "text-slate-500"
+                          }`}>
                             END DATE
                           </span>
                           <input 
@@ -1686,7 +1722,7 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pb-6 border-b border-dashed border-indigo-500/20">
                 <div>
                   <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Start Date</label>
-                  <input type="date" value={modalForm.startDate} onChange={(e) => setModalForm({...modalForm, startDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <input type="date" value={modalForm.startDate} disabled={!currentUser?.isAdmin} onChange={(e) => setModalForm({...modalForm, startDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${!currentUser?.isAdmin ? "cursor-not-allowed opacity-80" : ""} ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
                   <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>End Date</label>
