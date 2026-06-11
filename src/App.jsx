@@ -212,6 +212,12 @@ export default function App() {
         const { data: stakeholdersData } = await supabase.from('stakeholders').select('*');
         const { data: projectStakeholdersData } = await supabase.from('project_stakeholders').select('*');
         const { data: projectAttachmentsData } = await supabase.from('project_attachments').select('*');
+        const { data: metricsDataAll } = await supabase.from('project_metrics').select('ticket_id, end_date');
+
+        const metricsMap = {};
+        if (metricsDataAll) {
+            metricsDataAll.forEach(m => metricsMap[m.ticket_id] = m.end_date);
+        }
 
         const shMap = {};
         if (stakeholdersData) {
@@ -259,6 +265,7 @@ export default function App() {
             isPublished: p.is_published,
             assignedTo: usersMap[p.assigned_user_id] || 'Unassigned',
             stakeholders: stString,
+            endDate: metricsMap[p.ticket_id] || '',
             summary: p.project_name ? {
                 projectName: p.project_name,
                 type: lokkerMap[p.type_looker_id] || 'Other',
@@ -1216,6 +1223,24 @@ export default function App() {
                           <option key={member} value={member} className={isDarkMode ? "bg-[#0b0c16] text-slate-300" : "bg-white text-slate-800"}>{member}</option>
                         ))}
                       </select>
+                      
+                      {currentUser?.isAdmin && (
+                        <>
+                          <span className="font-bold text-slate-400/50 mx-2">|</span>
+                          <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
+                            isDarkMode ? "text-indigo-300" : "text-slate-500"
+                          }`}>
+                            END DATE
+                          </span>
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded border transition-all ${
+                            isDarkMode 
+                              ? "bg-[#0b0c16] text-[#38BDF8] border-indigo-500/20" 
+                              : "bg-[#F8FAFC] text-[#0284C7] border-[#DFE1E6]"
+                          }`}>
+                            {project.endDate || "Not set"}
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -1644,7 +1669,7 @@ export default function App() {
                 </div>
                 <div>
                   <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>End Date</label>
-                  <input type="date" value={modalForm.endDate} onChange={(e) => setModalForm({...modalForm, endDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <input type="date" value={modalForm.endDate} disabled={!currentUser?.isAdmin} onChange={(e) => setModalForm({...modalForm, endDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${!currentUser?.isAdmin ? "cursor-not-allowed opacity-80" : ""} ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div className="md:col-span-2">
                   <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Tools & Technologies</label>
