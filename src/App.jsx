@@ -1267,6 +1267,23 @@ export default function App() {
                           <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
                             isDarkMode ? "text-indigo-300" : "text-slate-500"
                           }`}>
+                            START DATE
+                          </span>
+                          <input 
+                            type="date"
+                            value={project.startDate || ""}
+                            onChange={(e) => handleStartDateChange(project.projectId, e.target.value)}
+                            className={`text-[10px] font-bold px-2 py-1 rounded border transition-all outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer ${
+                              isDarkMode 
+                                ? "bg-[#0b0c16] text-[#38BDF8] border-indigo-500/20 [color-scheme:dark]" 
+                                : "bg-[#F8FAFC] text-[#0284C7] border-[#DFE1E6] [color-scheme:light]"
+                            }`}
+                          />
+
+                          <span className="font-bold text-slate-400/50 mx-2">|</span>
+                          <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
+                            isDarkMode ? "text-indigo-300" : "text-slate-500"
+                          }`}>
                             END DATE
                           </span>
                           <input 
@@ -1790,8 +1807,8 @@ export default function App() {
                   <input type="text" placeholder="e.g. Automated cleanup" value={modalForm.dataMaintenance} onChange={(e) => setModalForm({...modalForm, dataMaintenance: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Dashboards Creation</label>
-                  <input type="text" placeholder="e.g. Created 5 new views" value={modalForm.dashboardsCreation} onChange={(e) => setModalForm({...modalForm, dashboardsCreation: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Dashboard Creation Time</label>
+                  <input type="text" placeholder="e.g. 5 hours" value={modalForm.dashboardsCreation} onChange={(e) => setModalForm({...modalForm, dashboardsCreation: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
               </div>
 
