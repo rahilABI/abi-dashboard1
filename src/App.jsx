@@ -1267,23 +1267,6 @@ export default function App() {
                           <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
                             isDarkMode ? "text-indigo-300" : "text-slate-500"
                           }`}>
-                            START DATE
-                          </span>
-                          <input 
-                            type="date"
-                            value={project.startDate || ""}
-                            onChange={(e) => handleStartDateChange(project.projectId, e.target.value)}
-                            className={`text-[10px] font-bold px-2 py-1 rounded border transition-all outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer ${
-                              isDarkMode 
-                                ? "bg-[#0b0c16] text-[#38BDF8] border-indigo-500/20 [color-scheme:dark]" 
-                                : "bg-[#F8FAFC] text-[#0284C7] border-[#DFE1E6] [color-scheme:light]"
-                            }`}
-                          />
-
-                          <span className="font-bold text-slate-400/50 mx-2">|</span>
-                          <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
-                            isDarkMode ? "text-indigo-300" : "text-slate-500"
-                          }`}>
                             END DATE
                           </span>
                           <input 
