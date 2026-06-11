@@ -696,6 +696,25 @@ export default function App() {
     triggerToast("Seeding complete! Please refresh the page.");
   };
 
+  const handleDateChange = async (projectId, field, newDate) => {
+    // Update local state optimistic
+    setProjects(projects.map(p => p.projectId === projectId ? { ...p, [field]: newDate } : p));
+    
+    const dbField = field === 'startDate' ? 'start_date' : 'end_date';
+    
+    const { error } = await supabase.from('project_metrics').upsert({
+      ticket_id: projectId,
+      [dbField]: newDate || null
+    }, { onConflict: 'ticket_id' });
+    
+    if (error) {
+      console.error(`Failed to update ${field}:`, error);
+      triggerToast(`Error updating date: ${error.message}`);
+    } else {
+      triggerToast(`${field === 'startDate' ? 'Start' : 'End'} Date updated`);
+    }
+  };
+
   const handleStatusChange = async (projectId, newStatus) => {
     setProjects(projects.map(p => p.projectId === projectId ? { ...p, projectStatus: newStatus } : p));
     const { data: lok } = await supabase.from('lokker').select('id').eq('label', newStatus).single();
@@ -1230,15 +1249,35 @@ export default function App() {
                           <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
                             isDarkMode ? "text-indigo-300" : "text-slate-500"
                           }`}>
-                            END DATE
+                            START
                           </span>
-                          <span className={`text-[10px] font-bold px-2 py-1 rounded border transition-all ${
-                            isDarkMode 
-                              ? "bg-[#0b0c16] text-[#38BDF8] border-indigo-500/20" 
-                              : "bg-[#F8FAFC] text-[#0284C7] border-[#DFE1E6]"
+                          <input 
+                            type="date"
+                            value={project.startDate || ""}
+                            onChange={(e) => handleDateChange(project.projectId, 'startDate', e.target.value)}
+                            className={`text-[10px] font-bold px-2 py-1 rounded border transition-all focus:outline-none cursor-pointer ${
+                              isDarkMode 
+                                ? "bg-[#0b0c16] text-[#38BDF8] border-indigo-500/40 hover:bg-[#1E293B]" 
+                                : "bg-[#F8FAFC] text-[#0284C7] border-[#DFE1E6] hover:bg-sky-50"
+                            }`}
+                          />
+
+                          <span className="font-bold text-slate-400/50 mx-2">|</span>
+                          <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
+                            isDarkMode ? "text-indigo-300" : "text-slate-500"
                           }`}>
-                            {project.endDate || "Not set"}
+                            END
                           </span>
+                          <input 
+                            type="date"
+                            value={project.endDate || ""}
+                            onChange={(e) => handleDateChange(project.projectId, 'endDate', e.target.value)}
+                            className={`text-[10px] font-bold px-2 py-1 rounded border transition-all focus:outline-none cursor-pointer ${
+                              isDarkMode 
+                                ? "bg-[#0b0c16] text-[#34D399] border-emerald-500/40 hover:bg-[#1E293B]" 
+                                : "bg-[#F8FAFC] text-emerald-600 border-[#DFE1E6] hover:bg-emerald-50"
+                            }`}
+                          />
                         </>
                       )}
                     </div>
