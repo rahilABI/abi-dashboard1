@@ -1405,7 +1405,7 @@ export default function App() {
         <div className="fixed inset-0 bg-[#03050c]/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className={`border-2 w-full max-w-4xl max-h-[88vh] overflow-y-auto shadow-2xl rounded-3xl p-8 md:p-10 relative transition-colors duration-300 animate-scale-up ${
             isDarkMode 
-              ? "bg-[#0e1122] border-indigo-500/30 text-slate-100 shadow-[0_0_50px_rgba(99,102,241,0.15)]" 
+              ? "bg-gradient-to-b from-[#131b20] to-[#0d1217] border-[#00ffd5]/20 text-slate-100 shadow-[0_0_50px_rgba(0,255,213,0.1)]" 
               : "bg-white border-[#DFE1E6] text-[#0F172A]"
           }`}>
             
@@ -1419,13 +1419,13 @@ export default function App() {
 
             {/* Top Row: ticket id, status box, Department, Publish (Exactly Wireframe 2) */}
             <div className={`flex flex-wrap items-center justify-between gap-6 pb-6 mb-8 mt-2 border-b ${
-              isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
+              isDarkMode ? "border-[#00ffd5]/20" : "border-[#DFE1E6]"
             }`}>
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>ticket id</span>
+                <span className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>ticket id</span>
                 <span className={`font-mono text-sm font-black px-3.5 py-1 rounded border ${
                   isDarkMode 
-                    ? "bg-[#141527] text-[#38BDF8] border-indigo-500/30" 
+                    ? "bg-[#00ffd5]/10 text-[#00ffd5] border-[#00ffd5]/30" 
                     : "bg-[#DEEBFF] text-[#0052CC] border-[#B3D4FF]"
                 }`}>
                   {activeProject.ticketId}
@@ -1433,7 +1433,7 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>
+                <span className={`text-xs font-black uppercase tracking-widest flex items-center gap-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>
                   Status
                   {!canEditStatusAndPublish(activeProject) && <Lock className="h-3 w-3" />}
                 </span>
@@ -1450,10 +1450,10 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Department</span>
+                <span className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Department</span>
                 <span className={`text-xs font-extrabold px-3.5 py-1.5 rounded border uppercase tracking-widest ${
                   isDarkMode 
-                    ? "bg-[#141527] border-indigo-500/20 text-[#F0F4FF]" 
+                    ? "bg-[#141527] border-[#00ffd5]/20 text-[#F0F4FF]" 
                     : "bg-slate-100 border-[#DFE1E6] text-slate-700"
                 }`}>
                   {activeProject.department}
@@ -1467,7 +1467,7 @@ export default function App() {
                   activeProject.isPublished 
                     ? "text-emerald-400 bg-[#064E3B] border-emerald-500/40" 
                     : isDarkMode 
-                      ? "text-slate-400 bg-transparent border-indigo-500/20 hover:border-indigo-500/40" 
+                      ? "text-slate-400 bg-transparent border-[#00ffd5]/20 hover:border-indigo-500/40" 
                       : "text-slate-500 bg-transparent border-[#DFE1E6] hover:bg-slate-50"
                 } ${!canEditStatusAndPublish(activeProject) ? 'opacity-50 cursor-not-allowed hover:bg-transparent hover:border-transparent' : ''}`}
               >
@@ -1480,21 +1480,21 @@ export default function App() {
             {/* Row 2: Project name & Type (Exactly Wireframe 2) */}
             <div className="flex flex-col md:flex-row gap-6 mb-6">
               <div className="flex-1">
-                <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Project name</label>
+                <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Project name</label>
                 <input 
                   type="text"
                   value={modalForm.projectName}
                   onChange={(e) => setModalForm({...modalForm, projectName: e.target.value})}
                   className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
                     isDarkMode 
-                      ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white focus:bg-[#03050c]/80 focus:shadow-[0_0_15px_rgba(56,189,248,0.1)]" 
+                      ? "bg-[#03050c] border-[#00ffd5]/20 hover:border-[#38BDF8]/40 focus:border-[#00ffd5] text-white focus:bg-[#03050c]/80 focus:shadow-[0_0_15px_rgba(56,189,248,0.1)]" 
                       : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800 focus:bg-white"
                   }`} 
                   placeholder="System Project Node Name"
                 />
               </div>
               <div className="w-full md:w-1/3">
-                <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Type</label>
+                <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Type</label>
                 <input 
                   type="text"
                   list="type-options"
@@ -1503,7 +1503,7 @@ export default function App() {
                   onChange={(e) => setModalForm({...modalForm, type: e.target.value})}
                   className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
                     isDarkMode 
-                      ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white focus:bg-[#03050c]/80" 
+                      ? "bg-[#03050c] border-[#00ffd5]/20 hover:border-[#38BDF8]/40 focus:border-[#00ffd5] text-white focus:bg-[#03050c]/80" 
                       : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800 focus:bg-white"
                   }`} 
                 />
@@ -1517,10 +1517,10 @@ export default function App() {
 
             {/* Row 3: problem statement (Exactly Wireframe 2) */}
             <div className="mb-6">
-              <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>problem statement</label>
+              <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>problem statement</label>
               <div className={`w-full rounded-lg border px-4 py-3 text-xs font-semibold leading-relaxed ${
                 isDarkMode 
-                  ? "bg-[#03050c]/80 border-indigo-500/20 text-slate-300" 
+                  ? "bg-[#03050c]/80 border-[#00ffd5]/20 text-slate-300" 
                   : "bg-[#F8FAFC] border-[#DFE1E6] text-slate-600"
               }`}>
                 {activeProject.problemStatement}
@@ -1529,7 +1529,7 @@ export default function App() {
 
             {/* Row 3.5: Stakeholders */}
             <div className="mb-6">
-              <label className={`block text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>
+              <label className={`block text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>
                 Stakeholders
               </label>
               <div className={`w-full rounded-lg border px-4 py-3 text-sm font-semibold transition-all ${
@@ -1543,7 +1543,7 @@ export default function App() {
 
             {/* Row 4: Description (Exactly Wireframe 2) */}
             <div className="mb-8">
-              <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Description</label>
+              <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Description</label>
               <textarea 
                 value={modalForm.projectDescription}
                 onChange={(e) => setModalForm({...modalForm, projectDescription: e.target.value})}
@@ -1551,7 +1551,7 @@ export default function App() {
                 rows={4}
                 className={`w-full border px-4 py-3 rounded-lg text-sm font-semibold focus:outline-none resize-none transition-all ${
                   isDarkMode 
-                    ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white focus:bg-[#03050c]/80 focus:shadow-[0_0_15px_rgba(56,189,248,0.1)]" 
+                    ? "bg-[#03050c] border-[#00ffd5]/20 hover:border-[#38BDF8]/40 focus:border-[#00ffd5] text-white focus:bg-[#03050c]/80 focus:shadow-[0_0_15px_rgba(56,189,248,0.1)]" 
                     : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800 focus:bg-white"
                 }`} 
               />
@@ -1559,7 +1559,7 @@ export default function App() {
 
             {/* Row 4.5: Assigned Lead Developer */}
             <div className="mb-8">
-              <label className={`block text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>
+              <label className={`block text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>
                 Assigned Lead Developer
                 {!canEditAssignee && <Lock className="h-3.5 w-3.5 text-rose-500" />}
               </label>
@@ -1586,12 +1586,12 @@ export default function App() {
             {/* Row 5: Meetings overview (Exactly Wireframe 2) */}
             <div className="mb-10">
               <div className="flex items-center gap-4 mb-4">
-                <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Meetings overview</label>
+                <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Meetings overview</label>
                 <button 
                   onClick={handleAddMeeting} 
                   className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-lg transition-all focus:outline-none border ${
                     isDarkMode 
-                      ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-indigo-500/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
+                      ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-[#00ffd5]/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
                       : "bg-sky-100 text-[#0284C7] hover:bg-sky-200 border-sky-300"
                   }`}
                   title="Add timeline sync row"
@@ -1603,11 +1603,11 @@ export default function App() {
               <div className="space-y-3">
                 {modalForm.meetings.map((m, idx) => (
                   <div key={m.id} className={`flex flex-col md:flex-row items-stretch rounded-lg border overflow-hidden shadow-sm ${
-                    isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
+                    isDarkMode ? "border-[#00ffd5]/20" : "border-[#DFE1E6]"
                   }`}>
                     <div className={`px-4 py-2 flex items-center font-mono text-xs font-bold border-r min-w-[190px] ${
                       isDarkMode 
-                        ? "bg-[#03050c] text-indigo-300 border-indigo-500/20" 
+                        ? "bg-[#03050c] text-[#00ffd5] border-[#00ffd5]/20" 
                         : "bg-[#F8FAFC] text-slate-600 border-[#DFE1E6]"
                     }`}>
                       {m.timestamp}
@@ -1618,7 +1618,7 @@ export default function App() {
                       placeholder="Enter meeting synopsis details..."
                       className={`flex-grow px-4 py-3 text-xs font-semibold focus:outline-none ${
                         isDarkMode 
-                          ? "bg-[#0c0d1b] text-slate-200 focus:bg-[#03050c] placeholder-slate-500" 
+                          ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 placeholder-slate-500" 
                           : "bg-white text-slate-800 placeholder-slate-400"
                       }`} 
                     />
@@ -1637,12 +1637,12 @@ export default function App() {
             {/* Row 5.5: Outcomes overview */}
             <div className="mb-10">
               <div className="flex items-center gap-4 mb-4">
-                <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Outcomes overview</label>
+                <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Outcomes overview</label>
                 <button 
                   onClick={handleAddOutcome} 
                   className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-lg transition-all focus:outline-none border ${
                     isDarkMode 
-                      ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-indigo-500/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
+                      ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-[#00ffd5]/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
                       : "bg-sky-100 text-[#0284C7] hover:bg-sky-200 border-sky-300"
                   }`}
                   title="Add outcome point"
@@ -1654,11 +1654,11 @@ export default function App() {
               <div className="space-y-3">
                 {modalForm.outcomes.map((o, idx) => (
                   <div key={o.id} className={`flex flex-col md:flex-row items-stretch rounded-lg border overflow-hidden shadow-sm ${
-                    isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
+                    isDarkMode ? "border-[#00ffd5]/20" : "border-[#DFE1E6]"
                   }`}>
                     <div className={`px-4 py-2 flex items-center justify-center font-mono text-xs font-bold border-r w-12 ${
                       isDarkMode 
-                        ? "bg-[#03050c] text-indigo-300 border-indigo-500/20" 
+                        ? "bg-[#03050c] text-[#00ffd5] border-[#00ffd5]/20" 
                         : "bg-[#F8FAFC] text-slate-600 border-[#DFE1E6]"
                     }`}>
                       {idx + 1}
@@ -1677,7 +1677,7 @@ export default function App() {
                       }
                       className={`flex-grow px-4 py-3 text-xs font-semibold focus:outline-none ${
                         isDarkMode 
-                          ? "bg-[#0c0d1b] text-slate-200 focus:bg-[#03050c] placeholder-slate-500" 
+                          ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 placeholder-slate-500" 
                           : "bg-white text-slate-800 placeholder-slate-400"
                       }`} 
                     />
@@ -1696,114 +1696,114 @@ export default function App() {
 
 
             {/* Row 5.75: Impact & Metrics */}
-            <div className={`mb-10 p-6 rounded-2xl border ${isDarkMode ? "bg-[#080b1a] border-indigo-500/20 shadow-[inset_0_0_20px_rgba(99,102,241,0.05)]" : "bg-[#F8FAFC] border-[#DFE1E6]"}`}>
-              <h3 className={`text-sm font-black uppercase tracking-widest mb-6 ${isDarkMode ? "text-indigo-400" : "text-[#0284C7]"}`}>
+            <div className={`mb-10 p-6 rounded-2xl border ${isDarkMode ? "bg-[#0d1217] border-[#00ffd5]/20 shadow-[inset_0_0_20px_rgba(0,255,213,0.05)]" : "bg-[#F8FAFC] border-[#DFE1E6]"}`}>
+              <h3 className={`text-sm font-black uppercase tracking-widest mb-6 ${isDarkMode ? "text-[#00ffd5]" : "text-[#0284C7]"}`}>
                 Impact & Metrics
               </h3>
               
               {/* Grid 1: Basic & Timeline */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pb-6 border-b border-dashed border-indigo-500/20">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pb-6 border-b border-dashed border-[#00ffd5]/20">
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Start Date</label>
-                  <input type="date" value={modalForm.startDate} disabled={!currentUser?.isAdmin} onChange={(e) => setModalForm({...modalForm, startDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${!currentUser?.isAdmin ? "cursor-not-allowed opacity-80" : ""} ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Start Date</label>
+                  <input type="date" value={modalForm.startDate} disabled={!currentUser?.isAdmin} onChange={(e) => setModalForm({...modalForm, startDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${!currentUser?.isAdmin ? "cursor-not-allowed opacity-80" : ""} ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>End Date</label>
-                  <input type="date" value={modalForm.endDate} disabled={!currentUser?.isAdmin} onChange={(e) => setModalForm({...modalForm, endDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${!currentUser?.isAdmin ? "cursor-not-allowed opacity-80" : ""} ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>End Date</label>
+                  <input type="date" value={modalForm.endDate} disabled={!currentUser?.isAdmin} onChange={(e) => setModalForm({...modalForm, endDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${!currentUser?.isAdmin ? "cursor-not-allowed opacity-80" : ""} ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div className="md:col-span-2">
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Tools & Technologies</label>
-                  <input type="text" placeholder="e.g. React, Supabase, Python" value={modalForm.toolsUsed} onChange={(e) => setModalForm({...modalForm, toolsUsed: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Tools & Technologies</label>
+                  <input type="text" placeholder="e.g. React, Supabase, Python" value={modalForm.toolsUsed} onChange={(e) => setModalForm({...modalForm, toolsUsed: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
               </div>
 
               {/* Grid 2: Before / After Text Comparisons */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pb-6 border-b border-dashed border-indigo-500/20">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pb-6 border-b border-dashed border-[#00ffd5]/20">
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Process Time (Before)</label>
-                  <input type="text" placeholder="e.g. 5 days" value={modalForm.processTimeBefore} onChange={(e) => setModalForm({...modalForm, processTimeBefore: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Process Time (Before)</label>
+                  <input type="text" placeholder="e.g. 5 days" value={modalForm.processTimeBefore} onChange={(e) => setModalForm({...modalForm, processTimeBefore: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>Process Time (After)</label>
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>Process Time (After)</label>
                   <input type="text" placeholder="e.g. 2 hours" value={modalForm.processTimeAfter} onChange={(e) => setModalForm({...modalForm, processTimeAfter: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-[#34D399]/30 text-white focus:border-[#34D399]" : "bg-emerald-50 border-emerald-200 text-slate-800"}`} />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>How Is This Process Currently Being Handled?</label>
-                  <textarea placeholder="e.g. Manual Excel tracking across multiple departments..." value={modalForm.processBefore} onChange={(e) => setModalForm({...modalForm, processBefore: e.target.value})} rows={3} className={`w-full border px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none resize-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>How Is This Process Currently Being Handled?</label>
+                  <textarea placeholder="e.g. Manual Excel tracking across multiple departments..." value={modalForm.processBefore} onChange={(e) => setModalForm({...modalForm, processBefore: e.target.value})} rows={3} className={`w-full border px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none resize-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div className="md:col-span-2">
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>How Will This Process Be Handled After?</label>
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>How Will This Process Be Handled After?</label>
                   <textarea placeholder="e.g. Automated Dashboard syncing in real-time..." value={modalForm.processAfter} onChange={(e) => setModalForm({...modalForm, processAfter: e.target.value})} rows={3} className={`w-full border px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none resize-none transition-all ${isDarkMode ? "bg-[#03050c] border-[#34D399]/30 text-white focus:border-[#34D399]" : "bg-emerald-50 border-emerald-200 text-slate-800"}`} />
                 </div>
 
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Error Rate (Before)</label>
-                  <input type="text" placeholder="e.g. 15%" value={modalForm.errorRateBefore} onChange={(e) => setModalForm({...modalForm, errorRateBefore: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Error Rate (Before)</label>
+                  <input type="text" placeholder="e.g. 15%" value={modalForm.errorRateBefore} onChange={(e) => setModalForm({...modalForm, errorRateBefore: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>Error Rate (After)</label>
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#34D399]" : "text-emerald-600"}`}>Error Rate (After)</label>
                   <input type="text" placeholder="e.g. < 1%" value={modalForm.errorRateAfter} onChange={(e) => setModalForm({...modalForm, errorRateAfter: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-[#34D399]/30 text-white focus:border-[#34D399]" : "bg-emerald-50 border-emerald-200 text-slate-800"}`} />
                 </div>
               </div>
 
               {/* Grid 3: Text Highlights */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 pb-6 border-b border-dashed border-indigo-500/20">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 pb-6 border-b border-dashed border-[#00ffd5]/20">
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Security Rate (%)</label>
-                  <input type="number" placeholder="100" value={modalForm.securityRate} onChange={(e) => setModalForm({...modalForm, securityRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Security Rate (%)</label>
+                  <input type="number" placeholder="100" value={modalForm.securityRate} onChange={(e) => setModalForm({...modalForm, securityRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Data Visibility Improved (Multiplier e.g., 3)</label>
-                  <input type="number" placeholder="3" value={modalForm.dataVisibilityImproved} onChange={(e) => setModalForm({...modalForm, dataVisibilityImproved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Data Visibility Improved (Multiplier e.g., 3)</label>
+                  <input type="number" placeholder="3" value={modalForm.dataVisibilityImproved} onChange={(e) => setModalForm({...modalForm, dataVisibilityImproved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Optimization Rate (%)</label>
-                  <input type="number" placeholder="95" value={modalForm.optimizationRate} onChange={(e) => setModalForm({...modalForm, optimizationRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Optimization Rate (%)</label>
+                  <input type="number" placeholder="95" value={modalForm.optimizationRate} onChange={(e) => setModalForm({...modalForm, optimizationRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
               </div>
 
               {/* Grid 4: Numeric KPIs (for Dashboard/Showcase Aggregation) */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Adoption Rate (%)</label>
-                  <input type="number" placeholder="89" value={modalForm.adoptionRate} onChange={(e) => setModalForm({...modalForm, adoptionRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Adoption Rate (%)</label>
+                  <input type="number" placeholder="89" value={modalForm.adoptionRate} onChange={(e) => setModalForm({...modalForm, adoptionRate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>SLA Compliance (%)</label>
-                  <input type="number" placeholder="99" value={modalForm.slaCompliance} onChange={(e) => setModalForm({...modalForm, slaCompliance: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>SLA Compliance (%)</label>
+                  <input type="number" placeholder="99" value={modalForm.slaCompliance} onChange={(e) => setModalForm({...modalForm, slaCompliance: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Error Reduced (%)</label>
-                  <input type="number" placeholder="78" value={modalForm.errorRateReduced} onChange={(e) => setModalForm({...modalForm, errorRateReduced: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Error Reduced (%)</label>
+                  <input type="number" placeholder="78" value={modalForm.errorRateReduced} onChange={(e) => setModalForm({...modalForm, errorRateReduced: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Hours Saved</label>
-                  <input type="number" placeholder="12400" value={modalForm.totalHoursSaved} onChange={(e) => setModalForm({...modalForm, totalHoursSaved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Hours Saved</label>
+                  <input type="number" placeholder="12400" value={modalForm.totalHoursSaved} onChange={(e) => setModalForm({...modalForm, totalHoursSaved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
               </div>
 
               {/* Grid 4.5: Additional Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Data Maintenance</label>
-                  <input type="text" placeholder="e.g. Automated cleanup" value={modalForm.dataMaintenance} onChange={(e) => setModalForm({...modalForm, dataMaintenance: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Data Maintenance</label>
+                  <input type="text" placeholder="e.g. Automated cleanup" value={modalForm.dataMaintenance} onChange={(e) => setModalForm({...modalForm, dataMaintenance: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Dashboard Creation Time</label>
-                  <input type="text" placeholder="e.g. 5 hours" value={modalForm.dashboardsCreation} onChange={(e) => setModalForm({...modalForm, dashboardsCreation: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Dashboard Creation Time</label>
+                  <input type="text" placeholder="e.g. 5 hours" value={modalForm.dashboardsCreation} onChange={(e) => setModalForm({...modalForm, dashboardsCreation: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
               </div>
 
               {/* Grid 5: Custom Metrics overview */}
-              <div className="mt-8 pt-6 border-t border-dashed border-indigo-500/20">
+              <div className="mt-8 pt-6 border-t border-dashed border-[#00ffd5]/20">
                 <div className="flex items-center gap-4 mb-4">
-                  <label className={`text-[10px] font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Custom Metrics Overview</label>
+                  <label className={`text-sm font-semibold ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Custom Metrics Overview</label>
                   <button 
                     onClick={handleAddCustomMetric} 
                     className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm transition-all focus:outline-none border ${
                       isDarkMode 
-                        ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-indigo-500/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
+                        ? "bg-indigo-950 text-[#38BDF8] hover:bg-indigo-900 border-[#00ffd5]/30 hover:shadow-[0_0_10px_rgba(56,189,248,0.3)]" 
                         : "bg-sky-100 text-[#0284C7] hover:bg-sky-200 border-sky-300"
                     }`}
                     title="Add custom metric point"
@@ -1815,11 +1815,11 @@ export default function App() {
                 <div className="space-y-3">
                   {modalForm.customMetrics.map((cm, idx) => (
                     <div key={cm.id} className={`flex flex-col md:flex-row items-stretch rounded-lg border overflow-hidden shadow-sm ${
-                      isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
+                      isDarkMode ? "border-[#00ffd5]/20" : "border-[#DFE1E6]"
                     }`}>
                       <div className={`px-4 py-2 flex items-center justify-center font-mono text-xs font-bold border-r w-12 ${
                         isDarkMode 
-                          ? "bg-[#03050c] text-indigo-300 border-indigo-500/20" 
+                          ? "bg-[#03050c] text-[#00ffd5] border-[#00ffd5]/20" 
                           : "bg-[#F8FAFC] text-slate-600 border-[#DFE1E6]"
                       }`}>
                         {idx + 1}
@@ -1830,7 +1830,7 @@ export default function App() {
                         placeholder="Metric Name (e.g., Revenue Increased)"
                         className={`w-1/2 border-r px-4 py-3 text-xs font-semibold focus:outline-none ${
                           isDarkMode 
-                            ? "bg-[#0c0d1b] text-slate-200 border-indigo-500/20 focus:bg-[#03050c] placeholder-slate-500" 
+                            ? "bg-[#0c0d1b] text-slate-200 border-[#00ffd5]/20 focus:bg-[#03050c] placeholder-slate-500" 
                             : "bg-white text-slate-800 border-gray-200 placeholder-slate-400"
                         }`} 
                       />
@@ -1840,7 +1840,7 @@ export default function App() {
                         placeholder="Value (e.g., 20%)"
                         className={`w-1/2 px-4 py-3 text-xs font-semibold focus:outline-none ${
                           isDarkMode 
-                            ? "bg-[#0c0d1b] text-slate-200 focus:bg-[#03050c] placeholder-slate-500" 
+                            ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 placeholder-slate-500" 
                             : "bg-white text-slate-800 placeholder-slate-400"
                         }`} 
                       />
@@ -1860,7 +1860,7 @@ export default function App() {
 
             {/* Bottom Row: Attach files & Save (Exactly Wireframe 2) */}
             <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mt-10 pt-6 border-t ${
-              isDarkMode ? "border-indigo-500/20" : "border-[#DFE1E6]"
+              isDarkMode ? "border-[#00ffd5]/20" : "border-[#DFE1E6]"
             }`}>
               
               {canEditStatusAndPublish(activeProject) ? (
@@ -1868,7 +1868,7 @@ export default function App() {
                   <div className="flex flex-col gap-2.5">
                     <label className={`flex items-center gap-2 cursor-pointer text-xs font-bold px-3.5 py-2.5 rounded-lg border transition-all w-fit ${
                       isDarkMode 
-                        ? "text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/30" 
+                        ? "text-[#00ffd5] bg-[#00ffd5]/10 hover:bg-[#00ffd5]/20 border-[#00ffd5]/30" 
                         : "text-[#0284C7] bg-[#F0F9FF] hover:bg-sky-100 border-[#B3D4FF]"
                     }`}>
                       <Paperclip className="h-4 w-4" />
@@ -1880,7 +1880,7 @@ export default function App() {
                       {modalForm.attachments.map((file, idx) => (
                         <span key={idx} className={`text-xs border px-2.5 py-1.5 rounded flex items-center gap-1.5 font-mono cursor-pointer transition-colors ${
                           isDarkMode 
-                            ? "bg-[#03050c] border-indigo-500/20 text-slate-300 hover:border-[#38BDF8]/40"
+                            ? "bg-[#03050c] border-[#00ffd5]/20 text-slate-300 hover:border-[#38BDF8]/40"
                             : "bg-slate-50 border-[#DFE1E6] text-slate-600 hover:border-[#0284C7]/40"
                         }`} onClick={(e) => {
                             if (file.dataUrl) {
@@ -1916,9 +1916,9 @@ export default function App() {
                   {/* Stark, bold save CTA (10% Accent) */}
                   <button 
                     onClick={saveDetailsContext} 
-                    className={`w-full sm:w-auto font-extrabold text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl shadow-lg transition-all duration-300 ${
+                    className={`w-full sm:w-auto font-bold text-sm px-8 py-3.5 rounded-xl shadow-lg transition-all duration-300 ${
                       isDarkMode 
-                        ? "bg-gradient-to-r from-[#0284C7] to-indigo-600 hover:from-[#0284C7]/80 hover:to-indigo-500/80 text-white shadow-indigo-500/10 hover:shadow-indigo-500/20" 
+                        ? "bg-gradient-to-r from-[#00ffd5] to-[#00b8ff] hover:from-[#00ffd5]/80 hover:to-[#00b8ff]/80 text-[#03050c] shadow-[0_0_15px_rgba(0,255,213,0.3)] hover:shadow-[0_0_20px_rgba(0,255,213,0.5)]" 
                         : "bg-[#0284C7] hover:bg-[#0284C7]/90 text-white shadow-sky-500/10 hover:shadow-sky-500/20"
                     }`}
                   >
@@ -1927,8 +1927,8 @@ export default function App() {
                 </>
               ) : (
                 <div className="w-full text-center py-4 flex flex-col items-center justify-center gap-3">
-                  <Lock className={`h-5 w-5 ${isDarkMode ? "text-indigo-400" : "text-slate-500"}`} />
-                  <span className={`text-[10px] font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-400/80" : "text-slate-500"}`}>
+                  <Lock className={`h-5 w-5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`} />
+                  <span className={`text-sm font-semibold ${isDarkMode ? "text-[#00ffd5]/80" : "text-slate-500"}`}>
                     View Only Mode — Attachments Restricted
                   </span>
                 </div>
@@ -1947,13 +1947,13 @@ export default function App() {
         <div className="fixed inset-0 bg-[#020308]/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className={`w-full max-w-md rounded-2xl overflow-hidden shadow-2xl border animate-scale-up ${
             isDarkMode 
-              ? "bg-[#0e1122]/95 border-indigo-500/30 shadow-[0_0_40px_rgba(56,189,248,0.15)] text-slate-100" 
+              ? "bg-[#0e1122]/95 border-[#00ffd5]/30 shadow-[0_0_40px_rgba(56,189,248,0.15)] text-slate-100" 
               : "bg-white border-[#DFE1E6] text-slate-800"
           }`}>
             
             {/* Google-Style Header Banner */}
             <div className={`p-6 border-b flex flex-col items-center text-center ${
-              isDarkMode ? "border-indigo-500/20 bg-[#03050c]/80" : "border-[#DFE1E6] bg-slate-50"
+              isDarkMode ? "border-[#00ffd5]/20 bg-[#03050c]/80" : "border-[#DFE1E6] bg-slate-50"
             }`}>
               <div className="h-10 w-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mb-2">
                 <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1975,7 +1975,7 @@ export default function App() {
             {forgotPasswordStep === 1 ? (
               <form onSubmit={handleForgotPassword} className="p-6 space-y-4">
                 <div>
-                  <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Email address</label>
+                  <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Email address</label>
                   <input 
                     type="email"
                     required
@@ -1984,7 +1984,7 @@ export default function App() {
                     placeholder="name@tricog.com"
                     className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
                       isDarkMode 
-                        ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white" 
+                        ? "bg-[#03050c] border-[#00ffd5]/20 hover:border-[#38BDF8]/40 focus:border-[#00ffd5] text-white" 
                         : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800"
                     }`}
                   />
@@ -2008,7 +2008,7 @@ export default function App() {
             ) : forgotPasswordStep === 3 ? (
               <form onSubmit={handleUpdatePassword} className="p-6 space-y-4">
                 <div>
-                  <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>New Password</label>
+                  <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>New Password</label>
                   <input 
                     type="password"
                     required
@@ -2017,7 +2017,7 @@ export default function App() {
                     placeholder="••••••••"
                     className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
                       isDarkMode 
-                        ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white" 
+                        ? "bg-[#03050c] border-[#00ffd5]/20 hover:border-[#38BDF8]/40 focus:border-[#00ffd5] text-white" 
                         : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800"
                     }`}
                   />
@@ -2033,7 +2033,7 @@ export default function App() {
               <form onSubmit={handleAuthSubmit} className="p-6 space-y-4">
                 {isSignUpMode && (
                   <div>
-                    <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Full Name</label>
+                    <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Full Name</label>
                     <input 
                       type="text"
                       required={isSignUpMode}
@@ -2042,7 +2042,7 @@ export default function App() {
                       placeholder="Adarsh Jayaraj"
                       className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
                         isDarkMode 
-                          ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white" 
+                          ? "bg-[#03050c] border-[#00ffd5]/20 hover:border-[#38BDF8]/40 focus:border-[#00ffd5] text-white" 
                           : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800"
                       }`}
                     />
@@ -2050,7 +2050,7 @@ export default function App() {
                 )}
                 
                 <div>
-                  <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Email address</label>
+                  <label className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Email address</label>
                   <input 
                     type="email"
                     required
@@ -2059,7 +2059,7 @@ export default function App() {
                     placeholder="name@tricog.com"
                     className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
                       isDarkMode 
-                        ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white" 
+                        ? "bg-[#03050c] border-[#00ffd5]/20 hover:border-[#38BDF8]/40 focus:border-[#00ffd5] text-white" 
                         : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800"
                     }`}
                   />
@@ -2067,7 +2067,7 @@ export default function App() {
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <label className={`block text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Password</label>
+                    <label className={`block text-xs font-black uppercase tracking-widest ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Password</label>
                     {!isSignUpMode && (
                       <button 
                         type="button" 
@@ -2086,7 +2086,7 @@ export default function App() {
                     placeholder="••••••••"
                     className={`w-full border h-11 px-4 rounded-lg text-sm font-semibold focus:outline-none transition-all ${
                       isDarkMode 
-                        ? "bg-[#03050c] border-indigo-500/20 hover:border-[#38BDF8]/40 focus:border-[#38BDF8] text-white" 
+                        ? "bg-[#03050c] border-[#00ffd5]/20 hover:border-[#38BDF8]/40 focus:border-[#00ffd5] text-white" 
                         : "bg-[#F8FAFC] border-[#DFE1E6] hover:border-[#0284C7]/40 focus:border-[#0284C7] text-slate-800"
                     }`}
                   />
