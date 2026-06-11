@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS public.project_metrics (
   error_rate_reduced NUMERIC,
   total_hours_saved NUMERIC,
   optimization_rate NUMERIC,
+  data_maintainces TEXT,
+  dashbords_creation TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

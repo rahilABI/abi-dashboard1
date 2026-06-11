@@ -343,7 +343,9 @@ export default function App() {
     slaCompliance: '',
     errorRateReduced: '',
     totalHoursSaved: '',
-    optimizationRate: ''
+    optimizationRate: '',
+    dataMaintenance: '',
+    dashboardsCreation: ''
   });
   
   const [toastMessage, setToastMessage] = useState(null);
@@ -768,7 +770,9 @@ export default function App() {
       slaCompliance: metricsData?.sla_compliance || '',
       errorRateReduced: metricsData?.error_rate_reduced || '',
       totalHoursSaved: metricsData?.total_hours_saved || '',
-      optimizationRate: metricsData?.optimization_rate || ''
+      optimizationRate: metricsData?.optimization_rate || '',
+      dataMaintenance: metricsData?.data_maintainces || '',
+      dashboardsCreation: metricsData?.dashbords_creation || ''
     });
     setIsDetailsModalOpen(true);
   };
@@ -865,7 +869,9 @@ export default function App() {
         sla_compliance: modalForm.slaCompliance ? parseFloat(modalForm.slaCompliance) : null,
         error_rate_reduced: modalForm.errorRateReduced ? parseFloat(modalForm.errorRateReduced) : null,
         total_hours_saved: modalForm.totalHoursSaved ? parseFloat(modalForm.totalHoursSaved) : null,
-        optimization_rate: modalForm.optimizationRate || ''
+        optimization_rate: modalForm.optimizationRate || '',
+        data_maintainces: modalForm.dataMaintenance || '',
+        dashbords_creation: modalForm.dashboardsCreation || ''
     }, { onConflict: 'ticket_id' });
 
     triggerToast("Saved project details to Supabase");
@@ -1709,6 +1715,18 @@ export default function App() {
                 <div>
                   <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Hours Saved</label>
                   <input type="number" placeholder="12400" value={modalForm.totalHoursSaved} onChange={(e) => setModalForm({...modalForm, totalHoursSaved: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+              </div>
+
+              {/* Grid 4.5: Additional Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Data Maintenance</label>
+                  <input type="text" placeholder="e.g. Automated cleanup" value={modalForm.dataMaintenance} onChange={(e) => setModalForm({...modalForm, dataMaintenance: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? "text-indigo-300" : "text-slate-500"}`}>Dashboards Creation</label>
+                  <input type="text" placeholder="e.g. Created 5 new views" value={modalForm.dashboardsCreation} onChange={(e) => setModalForm({...modalForm, dashboardsCreation: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#03050c] border-indigo-500/20 text-white focus:border-[#38BDF8]" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
               </div>
 
