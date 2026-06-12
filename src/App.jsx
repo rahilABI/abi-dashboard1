@@ -1705,7 +1705,7 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pb-6 border-b border-dashed border-[#00ffd5]/20">
                 <div>
                   <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>Start Date</label>
-                  <input type="date" value={modalForm.startDate} disabled={!currentUser?.isAdmin} onChange={(e) => setModalForm({...modalForm, startDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${!currentUser?.isAdmin ? "cursor-not-allowed opacity-80" : ""} ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
+                  <input type="date" value={modalForm.startDate} onChange={(e) => setModalForm({...modalForm, startDate: e.target.value})} className={`w-full border h-10 px-3 rounded-lg text-xs font-semibold focus:outline-none transition-all ${isDarkMode ? "bg-[#15191e] shadow-inner border border-[#2a343b] text-slate-200 focus:bg-[#0a0e12] focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50 text-white focus:border-[#00ffd5] focus:ring-1 focus:ring-[#00ffd5]/50" : "bg-white border-[#DFE1E6] text-slate-800"}`} />
                 </div>
                 <div>
                   <label className={`block text-sm font-semibold mb-1.5 ${isDarkMode ? "text-[#00ffd5]" : "text-slate-500"}`}>End Date</label>
